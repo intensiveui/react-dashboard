@@ -15,7 +15,7 @@
     "forceConsistentCasingInFileNames": true,
 
     //add aliases
-    "baseUrl": "src",
+    //"baseUrl": "src",
     "paths": {
       //"@typings": ["types/"],
       //"@hooks": ["hooks/"]
@@ -25,6 +25,6 @@
     "dist",
     "node_modules",
     "src/**/*.test.tsx",
-    "src/**/*.stories.tsx",
+    //"src/**/*.stories.tsx",
   ],
 }

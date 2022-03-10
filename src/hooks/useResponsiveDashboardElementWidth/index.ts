@@ -1,0 +1,2 @@
+import useResponsiveDashboardElementWidth from './useResponsiveDashboardElementWidth';
+export default useResponsiveDashboardElementWidth;

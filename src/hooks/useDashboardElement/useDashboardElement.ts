@@ -1,24 +1,21 @@
-import { DashbaordElementBaseType } from '../../types/DashobardElement.types';
+import DashbaordElementType from '../../types/DashobardElement.types';
 import DashobardElementActionsType from '../../types/DashobardElementActions.types';
 import useDashboardContext from '../useDashboardContext';
 
 type UseDashboardElementType = (
   id: string
-) => [DashbaordElementBaseType, DashobardElementActionsType];
+) => [DashbaordElementType, DashobardElementActionsType];
 
 const useDashboardElement: UseDashboardElementType = (id) => {
   const { elements, actions } = useDashboardContext();
   const { deleteElement } = actions;
 
-  const element = elements.find((t) => t.id === id);
+  const element = elements.filter((t) => t.id === id)[0];
 
   return [
+    element,
     {
-      id: element?.id || '',
-      title: element?.title || ''
-    },
-    {
-      delete: () => deleteElement(id)
+      delete: () => deleteElement(element)
     }
   ];
 };

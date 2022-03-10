@@ -1,12 +1,11 @@
-import DashboardElementLayoutType from './DashboardElementLayout';
-import DashobardElementComponentProps from './DashobardElementComponentProps.types';
+import { DashobardElementComponentProps } from '..';
+import GridElementType from './GridElement.types';
 
 export interface DashbaordElementBaseType {
-  id: string;
+  id: string,
   title: string;
 }
 
-export default interface DashbaordElementType extends DashbaordElementBaseType {
-  render: (props: DashobardElementComponentProps) => JSX.Element;
-  layout: DashboardElementLayoutType;
+export default interface DashbaordElementType extends DashbaordElementBaseType, GridElementType {
+  render: (props: DashobardElementComponentProps) => JSX.Element
 }
