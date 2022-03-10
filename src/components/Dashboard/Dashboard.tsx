@@ -2,10 +2,9 @@ import useDashboard from '../../hooks/useDashboard';
 import React, { FC } from 'react';
 import { DashboardProps } from './Dashboard.types';
 import DashobardActionsType from '../../types/DashobardActions.types.';
-import createDashboardContext from '../../contexts/DashbaordContext/DashboardContext';
 import DashboardContext from '../../contexts/DashbaordContext/DashboardContext';
 
-function Dashboard<TActionsType extends DashobardActionsType>(props: DashboardProps<TActionsType>) {
+function Dashboard<TElementProps, TActionsType extends DashobardActionsType>(props: DashboardProps<TElementProps, TActionsType>) {
   const {
     id,
     title,
@@ -18,12 +17,7 @@ function Dashboard<TActionsType extends DashobardActionsType>(props: DashboardPr
     actions: a
   } = props;
 
-  
-  type NewActionsType = {
-    [Property in keyof TActionsType]: () => void;
-  };
-
-  const [elements, layouts, actions, settings] = useDashboard<TActionsType, NewActionsType>({
+  const [elements, layouts, actions, settings] = useDashboard<TActionsType>({
     initialElements,
     initialLayouts,
     editModeDefaultValue,
@@ -36,7 +30,7 @@ function Dashboard<TActionsType extends DashobardActionsType>(props: DashboardPr
       value={{ id, elements, layouts, actions, columnCount, settings, elementWrapper }}
     >
       {title}
-      {children<NewActionsType>({
+      {children({
         id,
         elements,
         layouts,

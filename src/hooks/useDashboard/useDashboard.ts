@@ -7,15 +7,15 @@ import DashobardSettingsType from '../../types/DashobardSettings.types';
 import ResponsiveDashboardLayoutType, { LayoutBreakpointsType, ResponsiveDashboardElementLayoutType } from '../../types/ResponsiveDashboardLayout.types';
 
 
-function useDashboard<TActionsType extends DashobardActionsType, NewActionsType>({initialElements, initialLayouts, editModeDefaultValue, actions}: {
-  initialElements: DashbaordElementCollectionType,
+function useDashboard<TElementProps, TActionsType extends DashobardActionsType>({initialElements, initialLayouts, editModeDefaultValue, actions}: {
+  initialElements: DashbaordElementCollectionType<TElementProps>,
   initialLayouts: ResponsiveDashboardLayoutType,
   editModeDefaultValue: boolean, 
   actions: TActionsType
 }) : [
-  DashbaordElementCollectionType,
+  DashbaordElementCollectionType<TElementProps>,
   ResponsiveDashboardLayoutType,
-  NewActionsType,
+  TActionsType,
   DashobardSettingsType
 ] {
   const [elements, setElements] = useState(initialElements);
@@ -27,12 +27,12 @@ function useDashboard<TActionsType extends DashobardActionsType, NewActionsType>
     setLayouts(prev => addElementLayouts(prev, element, layout));
   };
 
-  const deleteElement = (element: DashbaordElementType) => {
+  const deleteElement = (element: DashbaordElementType<TElementProps>) => {
     setElements(prev => prev.filter((t) => t.id !== element.id));
     setLayouts(prev => deleteElementLayouts(prev, element))
   };
 
-  const deleteElementLayouts = (layouts: ResponsiveDashboardLayoutType, element: DashbaordElementType) => {
+  const deleteElementLayouts = (layouts: ResponsiveDashboardLayoutType, element: DashbaordElementType<TElementProps>) => {
     const keys = Object.keys(layouts) as LayoutBreakpointsType[];
     let layout: ResponsiveDashboardLayoutType  = {};
     for(const key of keys) {
@@ -44,7 +44,7 @@ function useDashboard<TActionsType extends DashobardActionsType, NewActionsType>
     return layout;
   }
 
-  const addElementLayouts = (layouts: ResponsiveDashboardLayoutType, element: DashbaordElementType, layout: ResponsiveDashboardElementLayoutType) => {
+  const addElementLayouts = (layouts: ResponsiveDashboardLayoutType, element: DashbaordElementType<TElementProps>, layout: ResponsiveDashboardElementLayoutType) => {
     const keys = Object.keys(layouts) as LayoutBreakpointsType[];
     for(const key of keys) {
       const singleLayout = layouts[key];
@@ -56,12 +56,12 @@ function useDashboard<TActionsType extends DashobardActionsType, NewActionsType>
   }
 
   const newaActions = useMemo(() => {
-    let n: NewActionsType = {};
+    let n = {};
    
     for(const a in actions) {
       //
-      n = {...n, [a]: () => {
-        const [e, l] = actions[a]?.(elements, layouts);
+      n = {...n, [a]: (event: any) => {
+        const [e, l] = actions[a]?.(event)(elements, layouts);
         setElements(e)
         setLayouts(l)
       }}
@@ -74,7 +74,12 @@ function useDashboard<TActionsType extends DashobardActionsType, NewActionsType>
   return [
     elements,
     layouts,
-    newaActions,
+    {
+      ...newaActions,
+      addElement,
+      deleteElement,
+      toggleEditMode: () => setEditMode(t => !t)
+    },
     {
       editModeEnabled: editMode
     }

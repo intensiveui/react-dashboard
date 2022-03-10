@@ -219,14 +219,18 @@ const initL: ResponsiveDashboardLayoutType = {
 // }
 
 
-interface CustomDashboardActionsType extends DashobardActionsType {
-  disableElement: CustomActionType
+interface CustomElementProps {
+  isDisabled: boolean
 }
 
-const Template: Story<DashboardProps<CustomDashboardActionsType>> = (args) => {
+interface CustomDashboardActionsType extends DashobardActionsType {
+  disableElement: CustomActionType<CustomElementProps>
+}
+
+const Template: Story<DashboardProps<CustomElementProps, CustomDashboardActionsType>> = (args) => {
   return (
     <div style={{ backgroundColor: '#f7f7f7', padding: 10 }}>
-      <Dashboard<CustomDashboardActionsType>
+      <Dashboard<CustomElementProps, CustomDashboardActionsType>
         {...args}
         title={'my dassh'}
         elements={initEl}
@@ -236,14 +240,13 @@ const Template: Story<DashboardProps<CustomDashboardActionsType>> = (args) => {
         elementWrapper={elementWrapper}
         //@ts-ignore
         actions={{
-          disableElement: (elements, layouts) => {
-            console.log("disabled", elements)
-            return [elements.slice(0,1), layouts]
+          disableElement: (event) => (elements, layouts) => {
+            return [elements.map(t => ({...t, props: {...t.props, isDisabled: true } }) ), layouts]
           }
         }}
       >
         {({ id, elements, layouts, columnCount, actions, context }) => {
-          const { addElement, toggleEditMode, disableElement, d } = actions;
+          const { addElement, toggleEditMode, disableElement } = actions;
           console.log("rendered")
           return (
             <> 

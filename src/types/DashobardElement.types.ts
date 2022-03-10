@@ -6,6 +6,7 @@ export interface DashbaordElementBaseType {
   title: string;
 }
 
-export default interface DashbaordElementType extends DashbaordElementBaseType, GridElementType {
-  render: (props: DashobardElementComponentProps) => JSX.Element
+export default interface DashbaordElementType<TElementProps> extends DashbaordElementBaseType, GridElementType {
+  render: (props: DashobardElementComponentProps) => JSX.Element,
+  props: TElementProps
 }
