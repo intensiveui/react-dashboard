@@ -1,16 +1,17 @@
 import { FC } from 'react';
 import DashbaordElementCollectionType from '../../types/DashbaordElementCollection.types';
-import DashobardActionsType from '../../types/DashobardActions.types.';
-import DashobardElementWrapperComponentProps from '../../types/DashobardElementWrapperComponentProps.types';
-import DashobardSettingsType from '../../types/DashobardSettings.types';
+import DashboardActionsType, { DashboardDefaultActionsType } from '../../types/DashboardActionsType';
+import DashboardElementWrapperComponentProps from '../../types/DashboardElementWrapperComponentProps.types';
+import DashboardSettingsType from '../../types/DasbhoardSettings.types';
 import ResponsiveDashboardLayoutType from '../../types/ResponsiveDashboardLayout.types';
+import { DashboardElementProps } from '../../types/DashboardElementProps';
 
-export default interface DashboardContextType<TActionsType extends DashobardActionsType> {
+export default interface DashboardContextType<TElementProps extends DashboardElementProps, TActionsType extends DashboardActionsType<TElementProps>> {
   id: string;
-  elements: DashbaordElementCollectionType;
+  elements: DashbaordElementCollectionType<TElementProps>;
   layouts: ResponsiveDashboardLayoutType,
   columnCount: number;
-  actions: TActionsType;
-  settings: DashobardSettingsType;
-  elementWrapper?: FC<DashobardElementWrapperComponentProps>
+  actions: TActionsType & DashboardDefaultActionsType<TElementProps>;
+  settings: DashboardSettingsType;
+  elementWrapper?: FC<DashboardElementWrapperComponentProps>
 }

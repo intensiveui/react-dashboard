@@ -12,6 +12,6 @@ export { default as useDashboardSettings } from './hooks/useDashboardSettings';
 /**
  * types
  */
-export { default as DashbaordElementType } from './types/DashobardElement.types';
-export { default as DashobardElementComponentProps } from './types/DashobardElementComponentProps.types';
+export { default as DashbaordElementType } from './types/DashbaordElement.types';
+export { default as DashobardElementComponentProps } from './types/DashboardElementComponent.types';
 export { default as DashbaordElementCollection } from './types/DashbaordElementCollection.types';

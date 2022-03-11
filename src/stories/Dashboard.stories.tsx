@@ -1,15 +1,16 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Story, Meta } from '@storybook/react';
 import Dashboard from '../components/Dashboard/Dashboard';
 import { DashboardProps } from '../components/Dashboard/Dashboard.types';
 import DashbaordElementCollectionType from '../types/DashbaordElementCollection.types';
 import useDashboardElement from '../hooks/useDashboardElement';
 import useDashboardSettings from '../hooks/useDashboardSettings';
-import DashobardElementWrapperComponentProps from '../types/DashobardElementWrapperComponentProps.types';
+import DashboardElementWrapperComponentProps from '../types/DashboardElementWrapperComponentProps.types';
 import DefaultDashboardGrid from '../components/DefaultDashboardGrid/DefaultDashboardGrid';
 import ResponsiveDashboardLayoutType from '../types/ResponsiveDashboardLayout.types';
-import DashobardActionsType from '../types/DashobardActions.types.';
+import DashboardActionsType from '../types/DashboardActionsType';
 import { CustomActionType } from '../types';
+import DashboardElementComponentType from '../types/DashboardElementComponent.types';
 //import useDashboardContext from '../hooks/useDashboardContext';
 
 export default {
@@ -18,34 +19,19 @@ export default {
   argTypes: {}
 } as Meta<typeof Dashboard>;
 
-const StatisticsCard: React.FC<{ id: string }> = ({ id }) => {
-  const [element] = useDashboardElement(id);
+const DashboardElementStatisticsCard : DashboardElementComponentType<CustomElementProps, CustomDashboardActionsType> = ({id}) => {
+  const [element] = useDashboardElement<CustomElementProps, CustomDashboardActionsType>(id);
+
   return (
     <div>
       <span>Statistics Component</span>
       {element.id}: {element.title}
+      {element.props.isDisabled && <div>disabled</div>}
     </div>
   );
 };
 
-const initialElements: DashbaordElementCollectionType = [
-  {
-    id: 'stats',
-    title: 'Statistics',
-    render: ({ id }) => {
-      return <StatisticsCard id={id}></StatisticsCard>;
-    }
-  },
-  {
-    id: 'stats2',
-    title: 'Statistics2',
-    render: ({ id }) => {
-      return <StatisticsCard id={id}></StatisticsCard>;
-    }
-  }
-];
-
-const elementWrapper: React.FC<DashobardElementWrapperComponentProps> = ({
+const elementWrapper: React.FC<DashboardElementWrapperComponentProps> = ({
   id,
   children
 }) => {
@@ -76,40 +62,55 @@ const elementWrapper: React.FC<DashobardElementWrapperComponentProps> = ({
   );
 };
 
-const initEl: DashbaordElementCollectionType = [
+const initEl: DashbaordElementCollectionType<CustomElementProps> = [
   {
     id: 'stats',
     title: 'Statistics',
     render: ({ id }) => {
-      return <StatisticsCard id={id}></StatisticsCard>;
+      return <DashboardElementStatisticsCard id={id}></DashboardElementStatisticsCard>;
+    },
+    props: {
+      isDisabled: false
     }
   },
   {
     id: 'stats2',
     title: 'Statistics',
     render: ({ id }) => {
-      return <StatisticsCard id={id}></StatisticsCard>;
+      return <DashboardElementStatisticsCard id={id}></DashboardElementStatisticsCard>;
+    },
+    props: {
+      isDisabled: false
     }
   },
   {
     id: 'stats3',
     title: 'Statistics',
     render: ({ id }) => {
-      return <StatisticsCard id={id}></StatisticsCard>;
+      return <DashboardElementStatisticsCard id={id}></DashboardElementStatisticsCard>;
+    },
+    props: {
+      isDisabled: false
     }
   },
   {
     id: 'stats4',
     title: 'Statistics',
     render: ({ id }) => {
-      return <StatisticsCard id={id}></StatisticsCard>;
+      return <DashboardElementStatisticsCard id={id}></DashboardElementStatisticsCard>;
+    },
+    props: {
+      isDisabled: false
     }
   },
   {
     id: 'users',
     title: 'Statistics',
     render: ({ id }) => {
-      return <StatisticsCard id={id}></StatisticsCard>;
+      return <DashboardElementStatisticsCard id={id}></DashboardElementStatisticsCard>;
+    },
+    props: {
+      isDisabled: false
     }
   }
 ];
@@ -194,7 +195,7 @@ const initL: ResponsiveDashboardLayoutType = {
 
 // const GridLayoutDashboardGrid : React.FC<DashboardGridProps> = ({id, elements, layouts, elementWrapper, columnCount, actions}) => {
 //   useEffect(() => {
-//     console.log("mount")
+//     
 //   }, [])
 
 //   return (
@@ -223,7 +224,7 @@ interface CustomElementProps {
   isDisabled: boolean
 }
 
-interface CustomDashboardActionsType extends DashobardActionsType {
+interface CustomDashboardActionsType extends DashboardActionsType<CustomElementProps> {
   disableElement: CustomActionType<CustomElementProps>
 }
 
@@ -238,16 +239,15 @@ const Template: Story<DashboardProps<CustomElementProps, CustomDashboardActionsT
         columnCount={16}
         editModeDefaultValue={false}
         elementWrapper={elementWrapper}
-        //@ts-ignore
         actions={{
           disableElement: (event) => (elements, layouts) => {
             return [elements.map(t => ({...t, props: {...t.props, isDisabled: true } }) ), layouts]
           }
         }}
       >
-        {({ id, elements, layouts, columnCount, actions, context }) => {
+        {({ id, elements, layouts, columnCount, actions }) => {
           const { addElement, toggleEditMode, disableElement } = actions;
-          console.log("rendered")
+      
           return (
             <> 
               <button
@@ -256,7 +256,10 @@ const Template: Story<DashboardProps<CustomElementProps, CustomDashboardActionsT
                     id: 'xyz',
                     title: 'xyz',
                     render: ({ id }) => {
-                      return <StatisticsCard id={id}></StatisticsCard>;
+                      return <DashboardElementStatisticsCard id={id}></DashboardElementStatisticsCard>;
+                    },
+                    props: {
+                      isDisabled: true
                     }
                   }, {
                     md: {
@@ -287,7 +290,7 @@ const Template: Story<DashboardProps<CustomElementProps, CustomDashboardActionsT
               <button
                 onClick={disableElement}
               >Disable</button>
-              <DefaultDashboardGrid<CustomDashboardActionsType> context={context}/>
+              <DefaultDashboardGrid/>
               {/* <GridLayoutDashboardGrid
                 id={id}
                 elements={elements}

@@ -1,28 +1,35 @@
 import { useMemo, useState } from 'react';
-import { DashboardProps } from '../../components/Dashboard/Dashboard.types';
 import DashbaordElementCollectionType from '../../types/DashbaordElementCollection.types';
-import DashobardActionsType, { DashboardActionAddElementType } from '../../types/DashobardActions.types.';
-import DashbaordElementType from '../../types/DashobardElement.types';
-import DashobardSettingsType from '../../types/DashobardSettings.types';
-import ResponsiveDashboardLayoutType, { LayoutBreakpointsType, ResponsiveDashboardElementLayoutType } from '../../types/ResponsiveDashboardLayout.types';
+import DashboardActionsType, { DashboardActionAddElementType, DashboardDefaultActionsType } from '../../types/DashboardActionsType';
+import DashbaordElementType from '../../types/DashbaordElement.types';
+import DashboardSettingsType from '../../types/DasbhoardSettings.types';
+import ResponsiveDashboardLayoutType from '../../types/ResponsiveDashboardLayout.types';
+import { DashboardElementProps } from '../../types/DashboardElementProps';
+import { addElementLayouts, deleteElementLayouts } from '../../utils/dashboaardElementUtils';
 
 
-function useDashboard<TElementProps, TActionsType extends DashobardActionsType>({initialElements, initialLayouts, editModeDefaultValue, actions}: {
+function useDashboard<TElementProps extends DashboardElementProps, TActionsType extends DashboardActionsType<TElementProps>>(props: {
   initialElements: DashbaordElementCollectionType<TElementProps>,
   initialLayouts: ResponsiveDashboardLayoutType,
   editModeDefaultValue: boolean, 
-  actions: TActionsType
+  customActions: TActionsType
 }) : [
   DashbaordElementCollectionType<TElementProps>,
   ResponsiveDashboardLayoutType,
-  TActionsType,
-  DashobardSettingsType
+  TActionsType & DashboardDefaultActionsType<TElementProps>,
+  DashboardSettingsType
 ] {
+  const {
+    initialElements, 
+    initialLayouts, 
+    editModeDefaultValue,
+    customActions
+  } = props;
   const [elements, setElements] = useState(initialElements);
   const [layouts, setLayouts] = useState(initialLayouts);
   const [editMode, setEditMode] = useState(editModeDefaultValue);
 
-  const addElement: DashboardActionAddElementType = (element, layout) => {
+  const addElement: DashboardActionAddElementType<TElementProps> = (element, layout) => {
     setElements(prev => [...prev, element]);
     setLayouts(prev => addElementLayouts(prev, element, layout));
   };
@@ -32,50 +39,24 @@ function useDashboard<TElementProps, TActionsType extends DashobardActionsType>(
     setLayouts(prev => deleteElementLayouts(prev, element))
   };
 
-  const deleteElementLayouts = (layouts: ResponsiveDashboardLayoutType, element: DashbaordElementType<TElementProps>) => {
-    const keys = Object.keys(layouts) as LayoutBreakpointsType[];
-    let layout: ResponsiveDashboardLayoutType  = {};
-    for(const key of keys) {
-      const singleLayout = layouts[key];
-      if(singleLayout) {
-        layout = {...layout, [key]: singleLayout.filter(t => t.i !== element.id)}
-      }
-    }
-    return layout;
-  }
-
-  const addElementLayouts = (layouts: ResponsiveDashboardLayoutType, element: DashbaordElementType<TElementProps>, layout: ResponsiveDashboardElementLayoutType) => {
-    const keys = Object.keys(layouts) as LayoutBreakpointsType[];
-    for(const key of keys) {
-      const singleLayout = layouts[key];
-      if(singleLayout) {
-        layouts = {...layouts, [key]: [...singleLayout, layout[key]]}
-      }
-    }
-    return layouts;
-  }
-
-  const newaActions = useMemo(() => {
-    let n = {};
-   
-    for(const a in actions) {
-      //
-      n = {...n, [a]: (event: any) => {
-        const [e, l] = actions[a]?.(event)(elements, layouts);
-        setElements(e)
-        setLayouts(l)
+  const actions: TActionsType = useMemo(() => {
+    let result: TActionsType = {};
+    const keys = Object.keys(customActions);
+    for(const key in keys) {
+      result = {...result, [key]: (event: any) => {
+        const [element, layout] = customActions[key]?.(event)(elements, layouts);
+        setElements(element)
+        setLayouts(layout)
       }}
     }
-    return n;
+    return result;
   },  [])
-
-  //const p : DashboardProps<tttt>
 
   return [
     elements,
     layouts,
     {
-      ...newaActions,
+      ...actions,
       addElement,
       deleteElement,
       toggleEditMode: () => setEditMode(t => !t)

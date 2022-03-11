@@ -3,11 +3,11 @@ import { Col } from 'react-grid-system';
 import useDashboardContext from '../../hooks/useDashboardContext';
 import useDashboardElement from '../../hooks/useDashboardElement';
 import useResponsiveDashboardElementWidth from '../../hooks/useResponsiveDashboardElementWidth';
-import DashobardActionsType from '../../types/DashobardActions.types.';
 
 
-function DefaultDashboardGridElement<TActionsType extends DashobardActionsType> ({id}: any) {
-  const {elementWrapper} = useDashboardContext<TActionsType>();
+
+function DefaultDashboardGridElement({id}: any) {
+  const {elementWrapper} = useDashboardContext();
   const [element] = useDashboardElement(id);
   const elementLayout = useResponsiveDashboardElementWidth(id);
   const ElementWrapper = elementWrapper; 
@@ -23,7 +23,7 @@ function DefaultDashboardGridElement<TActionsType extends DashobardActionsType> 
       </ElementWrapper>
     </Col>
   );
-};
+}
 
 export default DefaultDashboardGridElement;
 

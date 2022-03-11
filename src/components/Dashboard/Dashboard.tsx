@@ -1,10 +1,11 @@
 import useDashboard from '../../hooks/useDashboard';
-import React, { FC } from 'react';
+import React from 'react';
 import { DashboardProps } from './Dashboard.types';
-import DashobardActionsType from '../../types/DashobardActions.types.';
+import DashboardActionsType from '../../types/DashboardActionsType';
 import DashboardContext from '../../contexts/DashbaordContext/DashboardContext';
+import { DashboardElementProps } from '../../types/DashboardElementProps';
 
-function Dashboard<TElementProps, TActionsType extends DashobardActionsType>(props: DashboardProps<TElementProps, TActionsType>) {
+function Dashboard<TElementProps extends DashboardElementProps, TActionsType extends DashboardActionsType<TElementProps>>(props: DashboardProps<TElementProps, TActionsType>) {
   const {
     id,
     title,
@@ -14,14 +15,14 @@ function Dashboard<TElementProps, TActionsType extends DashobardActionsType>(pro
     children,
     editModeDefaultValue,
     elementWrapper,
-    actions: a
+    actions: customActions
   } = props;
 
-  const [elements, layouts, actions, settings] = useDashboard<TActionsType>({
+  const [elements, layouts, actions, settings] = useDashboard<TElementProps, TActionsType>({
     initialElements,
     initialLayouts,
     editModeDefaultValue,
-    actions: a
+    customActions
   });
 
 
@@ -35,11 +36,10 @@ function Dashboard<TElementProps, TActionsType extends DashobardActionsType>(pro
         elements,
         layouts,
         columnCount,
-        actions, 
-        context: DashboardContext
+        actions
       })}
     </DashboardContext.Provider>
   );
-};
+}
 
 export default Dashboard;

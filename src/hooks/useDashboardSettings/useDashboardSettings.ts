@@ -1,7 +1,7 @@
-import DashobardSettingsType from '../../types/DashobardSettings.types';
+import DashboardSettingsType from '../../types/DasbhoardSettings.types';
 import useDashboardContext from '../useDashboardContext';
 
-type UseDashboardSettingsType = () => DashobardSettingsType;
+type UseDashboardSettingsType = () => DashboardSettingsType;
 
 const useDashboardSettings: UseDashboardSettingsType = () => {
   const { settings } = useDashboardContext();

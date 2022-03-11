@@ -1,4 +1,4 @@
-import DashbaordElementType from './DashobardElement.types';
+import DashbaordElementType from './DashbaordElement.types';
 
 type DashbaordElementCollectionType<TElementProps> = Array<DashbaordElementType<TElementProps>>;
 

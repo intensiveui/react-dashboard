@@ -1,4 +1,9 @@
-import GridElementLayoutType from "./GridElementLayout.types";
-
-export default interface DashboardElementLayoutType extends GridElementLayoutType {
+export default interface DashboardElementLayoutType  {
+  i: string,
+  x: number;
+  y: number,
+  minW?: number,
+  minH?: number, 
+  w: number,
+  h: number 
 }

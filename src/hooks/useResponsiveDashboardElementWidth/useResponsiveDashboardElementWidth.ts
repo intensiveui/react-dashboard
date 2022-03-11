@@ -1,29 +1,17 @@
 import { useMemo } from "react";
-import DashboardElementLayoutCollectionType from "../../types/DashboardElementLayoutCollection.types";
+import DashboardActionsType from "../../types/DashboardActionsType";
+import { DashboardElementProps } from "../../types/DashboardElementProps";
 import ResponsiveDashboardElementWidthType from "../../types/ResponsiveDashboardElementWidth.types";
-import { LayoutBreakpointsType } from "../../types/ResponsiveDashboardLayout.types";
+import { getElementLayouts } from "../../utils/dashboaardElementUtils";
 import useDashboardContext from "../useDashboardContext";
+import useDashboardElement from "../useDashboardElement";
 
-type UseResponsiveDashboardElementWidth = (
-  id: string
-) => ResponsiveDashboardElementWidthType;
+function useResponsiveDashboardElementWidth<TElementProps extends DashboardElementProps, TActionsType extends DashboardActionsType<TElementProps>>(id: string) : ResponsiveDashboardElementWidthType {
+  const {layouts} = useDashboardContext<TElementProps, TActionsType>();  
+  const [element] = useDashboardElement<TElementProps, TActionsType>(id);
 
-const useResponsiveDashboardElementWidth : UseResponsiveDashboardElementWidth = (id) => {
-  const {layouts} = useDashboardContext();  
+  const elementLayout = useMemo(() => getElementLayouts(layouts, element), [layouts]);
 
-  let elementLayout = useMemo(() => {
-    const keys = Object.keys(layouts) as LayoutBreakpointsType[];
-    let layout: ResponsiveDashboardElementWidthType  = {};
-    for(const key of keys) {
-      const singleLayout = layouts[key] as DashboardElementLayoutCollectionType;
-      if(singleLayout) {
-        layout = {...layout, [key]: singleLayout.filter(t => t.i === id)[0]?.w}
-      }
-    }
-    return layout;
-  }, [layouts]);
-
-  
   return elementLayout;
 }
 

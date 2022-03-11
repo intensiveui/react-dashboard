@@ -1,13 +1,14 @@
-import DashbaordElementType from '../../types/DashobardElement.types';
-import DashobardElementActionsType from '../../types/DashobardElementActions.types';
+import DashbaordElementType from '../../types/DashbaordElement.types';
+import DashboardActionsType from '../../types/DashboardActionsType';
+import DashboardElementActionsType from '../../types/DashboardElementActions.types';
+import { DashboardElementProps } from '../../types/DashboardElementProps';
 import useDashboardContext from '../useDashboardContext';
 
-type UseDashboardElementType = (
+function useDashboardElement<TElementProps extends DashboardElementProps, TActionsType extends DashboardActionsType<TElementProps>>(
   id: string
-) => [DashbaordElementType, DashobardElementActionsType];
-
-const useDashboardElement: UseDashboardElementType = (id) => {
-  const { elements, actions } = useDashboardContext();
+) : [DashbaordElementType<TElementProps>, DashboardElementActionsType]
+{
+  const { elements, actions } = useDashboardContext<TElementProps, TActionsType>();
   const { deleteElement } = actions;
 
   const element = elements.filter((t) => t.id === id)[0];
@@ -18,6 +19,6 @@ const useDashboardElement: UseDashboardElementType = (id) => {
       delete: () => deleteElement(element)
     }
   ];
-};
+}
 
 export default useDashboardElement;
