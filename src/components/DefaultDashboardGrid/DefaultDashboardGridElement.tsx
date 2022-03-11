@@ -5,7 +5,6 @@ import useDashboardElement from '../../hooks/useDashboardElement';
 import useResponsiveDashboardElementWidth from '../../hooks/useResponsiveDashboardElementWidth';
 
 
-
 function DefaultDashboardGridElement({id}: any) {
   const {elementWrapper} = useDashboardContext();
   const [element] = useDashboardElement(id);

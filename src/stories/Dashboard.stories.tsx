@@ -9,8 +9,9 @@ import DashboardElementWrapperComponentProps from '../types/DashboardElementWrap
 import DefaultDashboardGrid from '../components/DefaultDashboardGrid/DefaultDashboardGrid';
 import ResponsiveDashboardLayoutType from '../types/ResponsiveDashboardLayout.types';
 import DashboardActionsType from '../types/DashboardActionsType';
-import { CustomActionType } from '../types';
+import { CustomDashboardActionType, CustomDashboardElementActionType } from '../types';
 import DashboardElementComponentType from '../types/DashboardElementComponent.types';
+import DashboardElementActionsType from '../types/DashboardElementActions.types';
 //import useDashboardContext from '../hooks/useDashboardContext';
 
 export default {
@@ -19,13 +20,28 @@ export default {
   argTypes: {}
 } as Meta<typeof Dashboard>;
 
-const DashboardElementStatisticsCard : DashboardElementComponentType<CustomElementProps, CustomDashboardActionsType> = ({id}) => {
-  const [element] = useDashboardElement<CustomElementProps, CustomDashboardActionsType>(id);
 
+
+interface CustomElementProps {
+  isDisabled: boolean
+}
+
+interface CustomDashboardActionsType extends DashboardActionsType<CustomElementProps> {
+  disableElement: CustomDashboardActionType<CustomElementProps>
+}
+
+interface CustomDashboardElementsActionsType extends DashboardElementActionsType<CustomElementProps> {
+  toggleEnabled: CustomDashboardElementActionType<CustomElementProps>
+}
+
+
+const DashboardElementStatisticsCard : DashboardElementComponentType<CustomElementProps, CustomDashboardActionsType> = ({id}) => {
+  const [element, actions] = useDashboardElement<CustomElementProps, CustomDashboardActionsType, CustomDashboardElementsActionsType>(id);
   return (
     <div>
       <span>Statistics Component</span>
       {element.id}: {element.title}
+      <button onClick={actions.toggleEnabled}>{element.props.isDisabled? "Enable": "Disable"}</button>
       {element.props.isDisabled && <div>disabled</div>}
     </div>
   );
@@ -35,7 +51,7 @@ const elementWrapper: React.FC<DashboardElementWrapperComponentProps> = ({
   id,
   children
 }) => {
-  const [elemen ,actions] = useDashboardElement(id);
+  const [element ,actions] = useDashboardElement(id);
   //const [element, layout, actions] = useGridElement(id);
   const { editModeEnabled } = useDashboardSettings();
   //const {actions: dActions} = useDashboardContext();
@@ -219,19 +235,10 @@ const initL: ResponsiveDashboardLayoutType = {
 //   )
 // }
 
-
-interface CustomElementProps {
-  isDisabled: boolean
-}
-
-interface CustomDashboardActionsType extends DashboardActionsType<CustomElementProps> {
-  disableElement: CustomActionType<CustomElementProps>
-}
-
-const Template: Story<DashboardProps<CustomElementProps, CustomDashboardActionsType>> = (args) => {
+const Template: Story<DashboardProps<CustomElementProps, CustomDashboardActionsType, CustomDashboardElementsActionsType>> = (args) => {
   return (
     <div style={{ backgroundColor: '#f7f7f7', padding: 10 }}>
-      <Dashboard<CustomElementProps, CustomDashboardActionsType>
+      <Dashboard<CustomElementProps, CustomDashboardActionsType, CustomDashboardElementsActionsType>
         {...args}
         title={'my dassh'}
         elements={initEl}
@@ -239,9 +246,15 @@ const Template: Story<DashboardProps<CustomElementProps, CustomDashboardActionsT
         columnCount={16}
         editModeDefaultValue={false}
         elementWrapper={elementWrapper}
-        actions={{
+        customDashboardActions={{
           disableElement: (event) => (elements, layouts) => {
             return [elements.map(t => ({...t, props: {...t.props, isDisabled: true } }) ), layouts]
+          }
+        }}
+        customElementActions={{
+          toggleEnabled: (event) => (elemnet, layout) => {
+            elemnet.props.isDisabled = !elemnet.props.isDisabled;
+            return [elemnet, layout]
           }
         }}
       >

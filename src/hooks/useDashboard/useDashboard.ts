@@ -6,24 +6,30 @@ import DashboardSettingsType from '../../types/DasbhoardSettings.types';
 import ResponsiveDashboardLayoutType from '../../types/ResponsiveDashboardLayout.types';
 import { DashboardElementProps } from '../../types/DashboardElementProps';
 import { addElementLayouts, deleteElementLayouts } from '../../utils/dashboaardElementUtils';
+import DashboardElementActionsType, { DashboardElementDefaultActionsType } from '../../types/DashboardElementActions.types';
 
 
-function useDashboard<TElementProps extends DashboardElementProps, TActionsType extends DashboardActionsType<TElementProps>>(props: {
+function useDashboard<
+  TElementProps extends DashboardElementProps,
+  TActionsType extends DashboardActionsType<TElementProps>,
+  TElementActionsType extends DashboardElementActionsType<TElementProps>
+>(props: {
   initialElements: DashbaordElementCollectionType<TElementProps>,
   initialLayouts: ResponsiveDashboardLayoutType,
   editModeDefaultValue: boolean, 
-  customActions: TActionsType
+  customDashboardActions?: TActionsType
 }) : [
   DashbaordElementCollectionType<TElementProps>,
   ResponsiveDashboardLayoutType,
   TActionsType & DashboardDefaultActionsType<TElementProps>,
+  //TElementActionsType & DashboardElementDefaultActionsType<TElementProps>,
   DashboardSettingsType
 ] {
   const {
     initialElements, 
     initialLayouts, 
     editModeDefaultValue,
-    customActions
+    customDashboardActions
   } = props;
   const [elements, setElements] = useState(initialElements);
   const [layouts, setLayouts] = useState(initialLayouts);
@@ -39,19 +45,30 @@ function useDashboard<TElementProps extends DashboardElementProps, TActionsType 
     setLayouts(prev => deleteElementLayouts(prev, element))
   };
 
+  const updateElement = (element: DashbaordElementType<TElementProps>) => {
+    setElements(prev => {
+      const elementIndex = prev.findIndex(t => t.id === element.id);
+      debugger
+      const newE = [...prev];
+      newE.splice(elementIndex, 1, element)
+      return newE;
+    });
+    //setLayouts(prev => deleteElementLayouts(prev, element))
+  };
+
   const actions: TActionsType = useMemo(() => {
     let result: TActionsType = {};
-    const keys = Object.keys(customActions);
-    for(const key in keys) {
+    for(const key in customDashboardActions) {
       result = {...result, [key]: (event: any) => {
-        const [element, layout] = customActions[key]?.(event)(elements, layouts);
-        setElements(element)
-        setLayouts(layout)
+        const [e, l] = customDashboardActions[key]?.(event)(elements, layouts);
+        setElements(e)
+        setLayouts(layouts)
       }}
     }
     return result;
   },  [])
 
+  console.log(elements, actions)
   return [
     elements,
     layouts,
@@ -59,7 +76,8 @@ function useDashboard<TElementProps extends DashboardElementProps, TActionsType 
       ...actions,
       addElement,
       deleteElement,
-      toggleEditMode: () => setEditMode(t => !t)
+      toggleEditMode: () => setEditMode(t => !t),
+      updateElement
     },
     {
       editModeEnabled: editMode

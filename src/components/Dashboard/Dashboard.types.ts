@@ -1,11 +1,16 @@
 import { FC } from 'react';
 import DashbaordElementCollectionType from '../../types/DashbaordElementCollection.types';
 import DashboardActionsType, { DashboardDefaultActionsType } from '../../types/DashboardActionsType';
+import DashboardElementActionsType from '../../types/DashboardElementActions.types';
 import { DashboardElementProps } from '../../types/DashboardElementProps';
 import DashboardElementWrapperComponentProps from '../../types/DashboardElementWrapperComponentProps.types';
 import ResponsiveDashboardLayoutType from '../../types/ResponsiveDashboardLayout.types';
 
-export interface DashboardProps<TElementProps extends DashboardElementProps, TActionsType extends DashboardActionsType<TElementProps>> {
+export interface DashboardProps<
+    TElementProps extends DashboardElementProps, 
+    TActionsType extends DashboardActionsType<TElementProps>,
+    TElementActionsType extends DashboardElementActionsType<TElementProps>
+  > {
   id: string;
   title: string;
   elements: DashbaordElementCollectionType<TElementProps>;
@@ -15,7 +20,8 @@ export interface DashboardProps<TElementProps extends DashboardElementProps, TAc
   rowHeight: string;
   editModeDefaultValue: boolean;
   elementWrapper: FC<DashboardElementWrapperComponentProps>,
-  actions: TActionsType
+  customDashboardActions?: TActionsType,
+  customElementActions?: TElementActionsType
 }
 
 export interface DashboardChildrenProps<TElementProps extends DashboardElementProps, TActionsType extends DashboardActionsType<TElementProps>> {

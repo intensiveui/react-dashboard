@@ -27,14 +27,26 @@ export const addElementLayouts = (layouts: ResponsiveDashboardLayoutType, elemen
     }
     return layouts; 
 }
-
-export const getElementLayouts = (layouts: ResponsiveDashboardLayoutType, element: DashbaordElementType<DashboardElementProps>) => {
+ 
+export const getElementLayoutWidths = (layouts: ResponsiveDashboardLayoutType, element: DashbaordElementType<DashboardElementProps>) => {
     const keys = Object.keys(layouts) as LayoutBreakpointsType[];
     let layout: ResponsiveDashboardElementWidthType  = {};
     for(const key of keys) {
       const singleLayout = layouts[key] as DashboardElementLayoutCollectionType;
       if(singleLayout) {
-        layout = {...layout, [key]: singleLayout.filter(t => t.i === id)[0]?.w}
+        layout = {...layout, [key]: singleLayout.filter(t => t.i === element.id)[0]?.w}
+      }
+    }
+    return layout;
+}
+
+export const getElementLayouts = (layouts: ResponsiveDashboardLayoutType, element: DashbaordElementType<DashboardElementProps>) : ResponsiveDashboardElementLayoutType => {
+    const keys = Object.keys(layouts) as LayoutBreakpointsType[];
+    let layout: ResponsiveDashboardElementLayoutType  = {};
+    for(const key of keys) {
+      const singleLayout = layouts[key] as DashboardElementLayoutCollectionType;
+      if(singleLayout) {
+        layout = {...layout, [key]: singleLayout.filter(t => t.i === element.id)[0]}
       }
     }
     return layout;

@@ -7,11 +7,11 @@ export type DashboardActionAddElementType<TElementProps extends DashboardElement
 export default interface DashboardActionsType<TElementProps extends DashboardElementProps> {
 }
 
-
 export interface DashboardDefaultActionsType<TElementProps extends DashboardElementProps> extends DashboardActionsType<TElementProps> {
   addElement: DashboardActionAddElementType<TElementProps>,
   deleteElement: (element: DashbaordElementType<TElementProps>) => void;
   toggleEditMode: () => void;
+  updateElement: (element: DashbaordElementType<TElementProps>) => void;
 }
 
 
