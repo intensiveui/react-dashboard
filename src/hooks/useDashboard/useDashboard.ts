@@ -48,7 +48,6 @@ function useDashboard<
   const updateElement = (element: DashbaordElementType<TElementProps>) => {
     setElements(prev => {
       const elementIndex = prev.findIndex(t => t.id === element.id);
-      debugger
       const newE = [...prev];
       newE.splice(elementIndex, 1, element)
       return newE;
@@ -66,9 +65,8 @@ function useDashboard<
       }}
     }
     return result;
-  },  [])
+  },  [elements, layouts])
 
-  console.log(elements, actions)
   return [
     elements,
     layouts,

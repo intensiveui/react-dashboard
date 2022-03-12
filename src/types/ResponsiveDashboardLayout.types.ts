@@ -7,13 +7,13 @@ export type LayoutBreakpointsType = 'xs' | 'sm' | 'md' | 'lg';
 export default interface ResponsiveDashboardLayoutType {
     xs?: DashboardElementLayoutCollectionType,
     sm?: DashboardElementLayoutCollectionType,
-    md?: DashboardElementLayoutCollectionType,
+    md: DashboardElementLayoutCollectionType,
     lg?: DashboardElementLayoutCollectionType
 }
 
 export interface ResponsiveDashboardElementLayoutType {
     xs?: DashboardElementLayoutType,
     sm?: DashboardElementLayoutType,
-    md?: DashboardElementLayoutType,
+    md: DashboardElementLayoutType,
     lg?: DashboardElementLayoutType
 }

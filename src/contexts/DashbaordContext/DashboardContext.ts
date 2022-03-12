@@ -13,8 +13,7 @@ const DashboardContext = createContext<DashboardContextType<DashboardElementProp
     id: "",
     settings: {
         editModeEnabled: false
-    },
-    columnCount: 12
+    }
 });
 
 

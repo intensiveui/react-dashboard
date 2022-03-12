@@ -16,10 +16,8 @@ function Dashboard<
     title,
     elements: initialElements,
     layouts: initialLayouts,
-    columnCount,
     children,
     editModeDefaultValue,
-    elementWrapper,
     customDashboardActions,
     customElementActions
   } = props;
@@ -34,15 +32,15 @@ function Dashboard<
 
   return (
     <DashboardContext.Provider
-      value={{ id, elements, layouts, customElementActions , actions, columnCount, settings, elementWrapper }}
+      value={{ id, elements, layouts, customElementActions , actions, settings, title }}
     >
-      {title}
       {children({
         id,
         elements,
         layouts,
-        columnCount,
-        actions
+        actions,
+        title,
+        settings
       })}
     </DashboardContext.Provider>
   );

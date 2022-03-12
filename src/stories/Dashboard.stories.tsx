@@ -5,13 +5,15 @@ import { DashboardProps } from '../components/Dashboard/Dashboard.types';
 import DashbaordElementCollectionType from '../types/DashbaordElementCollection.types';
 import useDashboardElement from '../hooks/useDashboardElement';
 import useDashboardSettings from '../hooks/useDashboardSettings';
-import DashboardElementWrapperComponentProps from '../types/DashboardElementWrapperComponentProps.types';
 import DefaultDashboardGrid from '../components/DefaultDashboardGrid/DefaultDashboardGrid';
 import ResponsiveDashboardLayoutType from '../types/ResponsiveDashboardLayout.types';
-import DashboardActionsType from '../types/DashboardActionsType';
-import { CustomDashboardActionType, CustomDashboardElementActionType } from '../types';
 import DashboardElementComponentType from '../types/DashboardElementComponent.types';
-import DashboardElementActionsType from '../types/DashboardElementActions.types';
+import { CustomDashboardActionsType, CustomDashboardElementProps, CustomDashboardElementsActionsType } from './Dashboard/CustomConfig';
+import ElementWrapper from './Dashboard/DashboardElementWrapper';
+import DashboardStatisticsElement, { StatisticsElementProps } from './Dashboard/Elements/DashboardStatisticsElement';
+import Button from './Dashboard/Elements/Button';
+import DashboardNextGoalElement, { NextGoalElementProps } from './Dashboard/Elements/DashboardNextGoalElement';
+import DashboardNotesElement from './Dashboard/Elements/DashboardNotesElement';
 //import useDashboardContext from '../hooks/useDashboardContext';
 
 export default {
@@ -22,21 +24,8 @@ export default {
 
 
 
-interface CustomElementProps {
-  isDisabled: boolean
-}
-
-interface CustomDashboardActionsType extends DashboardActionsType<CustomElementProps> {
-  disableElement: CustomDashboardActionType<CustomElementProps>
-}
-
-interface CustomDashboardElementsActionsType extends DashboardElementActionsType<CustomElementProps> {
-  toggleEnabled: CustomDashboardElementActionType<CustomElementProps>
-}
-
-
-const DashboardElementStatisticsCard : DashboardElementComponentType<CustomElementProps, CustomDashboardActionsType> = ({id}) => {
-  const [element, actions] = useDashboardElement<CustomElementProps, CustomDashboardActionsType, CustomDashboardElementsActionsType>(id);
+const DashboardCard : DashboardElementComponentType<CustomDashboardElementProps, CustomDashboardActionsType> = ({id}) => {
+  const [element, actions] = useDashboardElement<CustomDashboardElementProps, CustomDashboardActionsType, CustomDashboardElementsActionsType>(id);
   return (
     <div>
       <span>Statistics Component</span>
@@ -47,83 +36,75 @@ const DashboardElementStatisticsCard : DashboardElementComponentType<CustomEleme
   );
 };
 
-const elementWrapper: React.FC<DashboardElementWrapperComponentProps> = ({
-  id,
-  children
-}) => {
-  const [element ,actions] = useDashboardElement(id);
-  //const [element, layout, actions] = useGridElement(id);
-  const { editModeEnabled } = useDashboardSettings();
-  //const {actions: dActions} = useDashboardContext();
+const statsElements : DashbaordElementCollectionType<StatisticsElementProps> = [
+  {
+    id: 'sold-cars',
+    title: 'Statistics',
+    render: ({ id }) => {
+      return <DashboardStatisticsElement id={id}/>;
+    },
+    props: {
+      isDisabled: false,
+      data: {
+        value: '1000',
+        label: "Cars Sold"
+      }
+    }
+  },
+  {
+    id: 'new-customers',
+    title: 'Statistics',
+    render: ({ id }) => {
+      return <DashboardStatisticsElement id={id}/>;
+    },
+    props: {
+      isDisabled: false,
+      data: {
+        value: '90',
+        label: "New Customers"
+      }
+    }
+  },
+  {
+    id: 'new-models',
+    title: 'Statistics',
+    render: ({ id }) => {
+      return <DashboardStatisticsElement id={id}/>;
+    },
+    props: {
+      isDisabled: false,
+      data: {
+        value: '5',
+        label: "New Models"
+      }
+    }
+  },
+]
 
-  return (
-    <div
-      style={{
-        width: "calc(100% - 20px)",
-        height: "calc(100% - 20px)",
-        padding: '10px',
-        backgroundColor: 'white',
-        borderRadius: 10,
-        boxShadow: `0 1px 1px rgba(0,0,0,0.11), 
-                            0 2px 2px rgba(0,0,0,0.11), 
-                            0 4px 4px rgba(0,0,0,0.11), 
-                            0 6px 8px rgba(0,0,0,0.11),
-                            0 8px 16px rgba(0,0,0,0.11)`
-      }}
-    >
-      {/* <h2>{element.title}</h2> */}
-      {editModeEnabled && <button onClick={actions.delete}>Delete</button>}
-      {children}
-    </div>
-  );
-};
+const nextGoalElements : DashbaordElementCollectionType<NextGoalElementProps> = [
+  {
+    id: 'next-goal',
+    title: 'Next Goal',
+    render: ({ id }) => {
+      return <DashboardNextGoalElement id={id}/>;
+    },
+    props: {
+      isDisabled: false,
+      data: {
+        value: 'Sell 200 Units in the current month'
+      }
+    }
+  }
+] 
 
-const initEl: DashbaordElementCollectionType<CustomElementProps> = [
+const initEl: DashbaordElementCollectionType<CustomDashboardElementProps> = [
+  ...statsElements,
+  ...nextGoalElements,
   {
-    id: 'stats',
-    title: 'Statistics',
+    id: 'notes',
+    title: 'Notes',
     render: ({ id }) => {
-      return <DashboardElementStatisticsCard id={id}></DashboardElementStatisticsCard>;
-    },
-    props: {
-      isDisabled: false
-    }
-  },
-  {
-    id: 'stats2',
-    title: 'Statistics',
-    render: ({ id }) => {
-      return <DashboardElementStatisticsCard id={id}></DashboardElementStatisticsCard>;
-    },
-    props: {
-      isDisabled: false
-    }
-  },
-  {
-    id: 'stats3',
-    title: 'Statistics',
-    render: ({ id }) => {
-      return <DashboardElementStatisticsCard id={id}></DashboardElementStatisticsCard>;
-    },
-    props: {
-      isDisabled: false
-    }
-  },
-  {
-    id: 'stats4',
-    title: 'Statistics',
-    render: ({ id }) => {
-      return <DashboardElementStatisticsCard id={id}></DashboardElementStatisticsCard>;
-    },
-    props: {
-      isDisabled: false
-    }
-  },
-  {
-    id: 'users',
-    title: 'Statistics',
-    render: ({ id }) => {
-      return <DashboardElementStatisticsCard id={id}></DashboardElementStatisticsCard>;
+      return <DashboardNotesElement id={id}/>;
     },
     props: {
       isDisabled: false
@@ -134,72 +115,72 @@ const initEl: DashbaordElementCollectionType<CustomElementProps> = [
 const initL: ResponsiveDashboardLayoutType = {
   md: [
       {
-        i: 'stats',
+        i: 'sold-cars',
         x: 0,
         y: 0,
         w: 4,
         h: 4
       },
       {
-        i: 'stats2',
+        i: 'new-customers',
         x: 4,
         y: 0,
         w: 4,
         h: 4
       },
       {
-        i: 'stats3',
+        i: 'new-models',
         x: 8,
         y: 0,
         w: 4,
         h: 4
       },
       {
-        i: 'stats4',
+        i: 'next-goal',
         x: 12,
         y: 0,
-        w: 4,
-        h: 4
+        w: 5,
+        h: 6
       },
       {
-        i: 'users',
+        i: 'notes',
         x: 0,
         y: 5,
-        w: 8,
-        h: 4
+        w: 7,
+        h: 6
       }
     ],
   sm: [
       {
-        i: 'stats',
+        i: 'sold-cars',
         x: 0,
         y: 0,
         w: 6,
         h: 4
       },
       {
-        i: 'stats2',
+        i: 'new-customers',
         x: 4,
         y: 0,
         w: 6,
         h: 4
       },
       {
-        i: 'stats3',
+        i: 'new-models',
         x: 8,
         y: 0,
         w: 6,
         h: 4
       },
       {
-        i: 'stats4',
+        i: 'next-goal',
         x: 12,
         y: 0,
         w: 6,
-        h: 4
+        h: 12
       },
       {
-        i: 'users',
+        i: 'notes',
         x: 0,
         y: 5,
         w: 12,
@@ -209,46 +190,18 @@ const initL: ResponsiveDashboardLayoutType = {
 }   
 
 
-// const GridLayoutDashboardGrid : React.FC<DashboardGridProps> = ({id, elements, layouts, elementWrapper, columnCount, actions}) => {
-//   useEffect(() => {
-//     
-//   }, [])
-
-//   return (
-//     <GridLayout
-//         id={id}
-//         elements={elements}
-//         layouts={layouts}
-//         elementWrapper={elementWrapper}
-//         columnCount={columnCount}
-//         isResizable={false}
-//         isDraggable={false}
-//       >
-//         {({GridLayoutComponent, actions}) => {
-//           return (
-//             <>
-//              {<GridLayoutComponent />}
-//             </>
-//           )
-//         }}
-//       </GridLayout>
-//   )
-// }
-
-const Template: Story<DashboardProps<CustomElementProps, CustomDashboardActionsType, CustomDashboardElementsActionsType>> = (args) => {
+const Template: Story<DashboardProps<CustomDashboardElementProps, CustomDashboardActionsType, CustomDashboardElementsActionsType>> = (args) => {
   return (
     <div style={{ backgroundColor: '#f7f7f7', padding: 10 }}>
-      <Dashboard<CustomElementProps, CustomDashboardActionsType, CustomDashboardElementsActionsType>
+      <Dashboard<CustomDashboardElementProps, CustomDashboardActionsType, CustomDashboardElementsActionsType>
         {...args}
         title={'my dassh'}
         elements={initEl}
         layouts={initL}
-        columnCount={16}
         editModeDefaultValue={false}
-        elementWrapper={elementWrapper}
         customDashboardActions={{
-          disableElement: (event) => (elements, layouts) => {
-            return [elements.map(t => ({...t, props: {...t.props, isDisabled: true } }) ), layouts]
+          toggleElementEnabled: (event) => (elements, layouts) => {
+            return [elements.map(t => ({...t, props: {...t.props, isDisabled: !t.props.isDisabled } }) ), layouts]
           }
         }}
         customElementActions={{
@@ -258,60 +211,59 @@ const Template: Story<DashboardProps<CustomElementProps, CustomDashboardActionsT
           }
         }}
       >
-        {({ id, elements, layouts, columnCount, actions }) => {
-          const { addElement, toggleEditMode, disableElement } = actions;
+        {({ id, elements, layouts, actions, title, settings }) => {
+          const { addElement, toggleEditMode, toggleElementEnabled } = actions;
+          const { editModeEnabled } = settings;
       
           return (
             <> 
-              <button
-                onClick={() => {
-                  addElement({
-                    id: 'xyz',
-                    title: 'xyz',
-                    render: ({ id }) => {
-                      return <DashboardElementStatisticsCard id={id}></DashboardElementStatisticsCard>;
-                    },
-                    props: {
-                      isDisabled: true
-                    }
-                  }, {
-                    md: {
+              <div style={{display: "flex", justifyContent: "center"}}>
+                <Button
+                  onClick={() => {
+                    addElement({
+                      id: 'xyz',
+                      title: 'xyz',
+                      render: ({ id }) => {
+                        return <DashboardCard id={id}></DashboardCard>;
+                      },
+                      props: {
+                        isDisabled: true
+                      }
+                    }, {
+                      md: {
+                          i: 'xyz',
+                          x: 0,
+                          y: 0,
+                          w: 8,
+                          h: 8
+                      },
+                      sm: {
                         i: 'xyz',
                         x: 0,
                         y: 0,
-                        w: 8,
-                        h: 8
+                        w: 12,
+                        h: 12
                     },
-                    sm: {
-                      i: 'xyz',
-                      x: 0,
-                      y: 0,
-                      w: 12,
-                      h: 12
-                  },
-                  });
-                }}
-              >
-              
-                {' '}
-                Add element
-              </button>
-              <button onClick={() => toggleEditMode()}>
-                {' '}
-                Toggle Edit mode
-              </button>
-              <button
-                onClick={disableElement}
-              >Disable</button>
-              <DefaultDashboardGrid/>
-              {/* <GridLayoutDashboardGrid
-                id={id}
-                elements={elements}
-                layouts={layouts}
-                columnCount={columnCount}
-                actions={actions}
-                elementWrapper={elementWrapper}
-              /> */}
+                    });
+                  }}
+                >
+                  Add Element
+                </Button>
+                <Button onClick={() => toggleEditMode()}>
+                  {editModeEnabled ?  "Disable Edit Mode" : "Enable Edit Mode"}
+                </Button>
+                <Button
+                  onClick={toggleElementEnabled}
+                >Toggle All Elements Enabled
+                </Button>
+              </div>
+              <DefaultDashboardGrid<CustomDashboardElementProps, CustomDashboardActionsType, CustomDashboardElementsActionsType>
+                elementWrapper={ElementWrapper}
+                columnCount={12}
+                rowHeight={28}
+                padding={10}
+                fallbackLayoutScreenClassConfig={"md"}
+              />
             </>
           );
         }}
